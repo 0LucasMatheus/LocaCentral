@@ -1,147 +1,129 @@
-# MicroRealEstate
+# LocaCentral
 
-[![Continuous Integration](https://github.com/microrealestate/microrealestate/actions/workflows/ci.yml/badge.svg?event=push)](https://github.com/microrealestate/microrealestate/actions/workflows/ci.yml)
+Sistema de gestão de locação imobiliária residencial para o mercado brasileiro, construído sobre o [MicroRealEstate](https://github.com/microrealestate/microrealestate) (licença MIT) e adaptado para atender à **Lei do Inquilinato (Lei 8.245/91)**.
 
-MicroRealEstate is an open-source application designed to assist landlords in managing their properties and rentals. MicroRealEstate (MRE) serves as a centralized platform for landlords to streamline their property management tasks.
+Desenvolvido para imobiliárias e administradoras de imóveis que precisam de uma solução self-hosted — sem mensalidade de SaaS, instalado na própria VPS do cliente.
 
-## Key Features
+---
 
-- Centralized Property and Tenant Information: MRE allows landlords to store all property and tenant details in one convenient location. From property specifications to tenant records and contact information.
+## Funcionalidades
 
-- Rent Lease Creation: MRE simplifies the process of creating rent leases. It offers customizable templates that enable landlords to generate lease.
+- **Gestão de contratos** — contratos por prazo determinado e indeterminado, com índice de reajuste (IGPM, IPCA, INCC, IVAR, IGP-DI) e multa rescisória proporcional conforme art. 4º da Lei 8.245/91
+- **Cobranças mensais** — emissão de boletos via integração com a Cora, registro de pagamentos e controle de inadimplência
+- **Reajuste anual automático** — cron job que identifica contratos com aniversário no dia e notifica a locadora para aplicar o reajuste
+- **Garantias locatícias** — suporte aos 4 tipos do art. 37: fiador, caução, seguro fiança e título de capitalização
+- **Proprietários e imóveis** — cadastro completo com dados bancários, chave Pix e extrato de repasses
+- **Geração de documentos PDF** — templates de contrato customizáveis com variáveis dinâmicas
+- **Portal do inquilino** — acesso via OTP por e-mail para visualizar cobranças e baixar boletos
+- **Multi-empresa (multi-tenant)** — uma instalação, múltiplas imobiliárias isoladas
+- **White-label** — logo, cores e nome da empresa configuráveis por variável de ambiente, sem alterar código
 
-- Rent Payment Tracking: MRE provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
+---
 
-- Custom Document Generation: MRE allows landlords to create custom documents for effective communication with tenants. Personalized letters, notices, and announcements can be generated to ensure clear and consistent correspondence.
+## Pré-requisitos
 
-- Collaboration: Whether you are an independent landlord or manage a real estate business with multiple collaborators, MRE supports collaboration and facilitates task coordination within teams.
+- [Docker](https://docs.docker.com/engine/install/) instalado
+- [Docker Compose](https://docs.docker.com/compose/install/) v2+
 
-## Screenshots
+---
 
-|                                                                                                                           |                                                                                                                                   |                                                                                                                                       |
-| :-----------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
-|                                                      **Rents page**                                                       |                                                **Send notices, receipt by email**                                                 |                                                            **Pay a rent**                                                             |
-|      [<img src="./documentation/pictures/rents.png" alt="drawing" width="200"/>](./documentation/pictures/rents.png)      | [<img src="./documentation/pictures/sendmassemails.png" alt="drawing" width="200"/>](./documentation/pictures/sendmassemails.png) |          [<img src="./documentation/pictures/payment.png" alt="drawing" width="200"/>](./documentation/pictures/payment.png)          |
-|                                                     **Tenants page**                                                      |                                                        **Tenant details**                                                         |                                                                                                                                       |
-|    [<img src="./documentation/pictures/tenants.png" alt="drawing" width="200"/>](./documentation/pictures/tenants.png)    | [<img src="./documentation/pictures/tenantcontract.png" alt="drawing" width="200"/>](./documentation/pictures/tenantcontract.png) |                                                                                                                                       |
-|                                                    **Properties page**                                                    |                                                       **Property details**                                                        |                                                                                                                                       |
-| [<img src="./documentation/pictures/properties.png" alt="drawing" width="200"/>](./documentation/pictures/properties.png) |       [<img src="./documentation/pictures/property.png" alt="drawing" width="200"/>](./documentation/pictures/property.png)       |                                                                                                                                       |
-|                                                     **Landlord page**                                                     |                                                        **Template leases**                                                        |                                                         **Author a contract**                                                         |
-|   [<img src="./documentation/pictures/landlord.png" alt="drawing" width="200"/>](./documentation/pictures/landlord.png)   |         [<img src="./documentation/pictures/leases.png" alt="drawing" width="200"/>](./documentation/pictures/leases.png)         | [<img src="./documentation/pictures/contracttemplate.png" alt="drawing" width="200"/>](./documentation/pictures/contracttemplate.png) |
-|                                                        **Members**                                                        |                                                                                                                                   |
-|    [<img src="./documentation/pictures/members.png" alt="drawing" width="200"/>](./documentation/pictures/members.png)    |                                                                                                                                   |
+## Instalação
 
-## Self-host the application
+### 1. Clonar o repositório
 
-> **Prerequisite**
->
-> - [Install Docker and Compose](https://docs.docker.com/compose/install)
-
-### Download the docker-compose.yml file
-
-``` shell
-mkdir mre
-cd mre
-curl https://raw.githubusercontent.com/microrealestate/microrealestate/master/docker-compose.yml > docker-compose.yml
-curl https://raw.githubusercontent.com/microrealestate/microrealestate/master/.env.domain > .env
+```shell
+git clone https://github.com/0LucasMatheus/LocaCentral.git
+cd LocaCentral
 ```
 
-Update the secrets and tokens in the `.env` file (at the end of the file).
+### 2. Configurar o ambiente
 
-**🚨 IMPORTANT**
-
-In case you previously ran the application, the secrets, the tokens and the MONGO_URL must be reported from previous .env file to the new one.
-Otherwise, the application will not point to the correct database and will not be able to login with the previous credentials.
-
-### Localhost setup
-
-Start the application under localhost:
-
-``` shell
-APP_PORT=8080 docker compose --profile local up
-```
-The application will be available on http://localhost:8080/landlord and http://localhost:8080/tenant.
-
-
-### Ip setup
-
-Start the application under a custom ip:
-
-``` shell
-sudo APP_DOMAIN=x.x.x.x docker compose up
-```
-x.x.x.x is the ip address of the server.
-
-The application will be available on http://x.x.x.x/landlord and http://x.x.x.x/tenant.
-
-In case you need to use a port number do not pass it in the APP_DOMAIN. You can use the APP_PORT environment variable.
-
-
-### Domain with https setup
-
-Start the app under a custom domain over https:
-
-``` shell
-sudo APP_DOMAIN=app.example.com APP_PROTOCOL=https docker compose up
+```shell
+cp .env.domain .env
 ```
 
-Make sure your DNS records are pointing to the private server. The application will automatically issue the ssl certificate.
+Edite o `.env` com os dados do cliente: credenciais de e-mail (Gmail, Mailgun ou SMTP), secrets JWT e configurações da marca.
 
-The application will be available on https://app.example.com/landlord and https://app.example.com/tenant.
+> **Importante:** os secrets e tokens gerados na primeira instalação devem ser preservados. Se forem perdidos, não será possível fazer login nem descriptografar dados existentes.
 
+### 3. Subir os serviços
 
-### Backup and restore the data
-
-The backup and restore commands can be executed when the application is running to allow connecting to MongoDB.
-
-#### Backup
-
-In the mre directory run:
-
-``` shell
-docker compose run mongo /usr/bin/mongodump --uri=mongodb://mongo/mredb --gzip --archive=./backup/mredb-$(date +%F_%T).dump
+```shell
+docker-compose up -d
 ```
 
-Replace "mredb" with the name of your database (see .env file). By default, the database name is "mredb".
+O painel da locadora estará disponível em **http://localhost:8080/landlord**
+O portal do inquilino em **http://localhost:8080/tenant**
 
-The archive file will be placed in the "backup" folder.
+---
 
-#### Restore
+## Deploy em VPS
 
-In the mre/backup directory, select an archive file you want to restore. 
+### IP fixo
 
-Then run the restore command:
-
-``` shell
-docker compose run mongo /usr/bin/mongorestore --uri=mongodb://mongo/mredb --drop --gzip --archive=./backup/mredb-XXXX.dump 
+```shell
+sudo APP_DOMAIN=x.x.x.x docker-compose up -d
 ```
 
-Where mredb-XXXX.dump is the archive file you selected.
+### Domínio com HTTPS (SSL automático via Caddy)
 
-Again, replace "mredb" with the name of your database (see .env file). By default, the database name is "mredb".
+```shell
+sudo APP_DOMAIN=app.exemplo.com.br APP_PROTOCOL=https docker-compose --profile production up -d
+```
 
+Aponte o DNS do domínio para o IP da VPS. O certificado SSL é emitido automaticamente.
 
-## Developers
+---
 
-To run the application in development mode, follow the steps outlined in the documentation available [here](./documentation/DEVELOPER.md)
+## Backup e restauração
 
-## Donate
+Os comandos abaixo podem ser executados com a aplicação rodando.
 
-Thank you for your interest in supporting MicroRealEstate.
-Every contribution will help us pay our ongoing maintenance and development costs 🙏
+### Backup
 
-[![Donate](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub)](https://github.com/sponsors/camelaissani)
+```shell
+docker-compose run mongo /usr/bin/mongodump \
+  --uri=mongodb://mongo/mredb \
+  --gzip \
+  --archive=./backup/mredb-$(date +%F_%T).dump
+```
 
-## Contact
+### Restaurar
 
-LinkedIn: [www.linkedin.com/in/caissani](https://www.linkedin.com/in/caissani/)
+```shell
+docker-compose run mongo /usr/bin/mongorestore \
+  --uri=mongodb://mongo/mredb \
+  --drop --gzip \
+  --archive=./backup/mredb-XXXX.dump
+```
 
-X: [@camelaissani](https://x.com/camelaissani)
+Substitua `mredb` pelo nome do banco configurado no `.env` (padrão: `mredb`).
 
-## License
+---
 
-The project is licensed under the MIT License. To view the license details, please follow the link below:
+## White-label
 
-[MIT License](./LICENSE)
+Para configurar a identidade visual do cliente, defina no `.env`:
 
-Feel free to review the license terms and conditions to understand the permissions and restrictions associated with the project.
+```env
+NEXT_PUBLIC_BRAND_NAME=Arthur Levy Imóveis
+NEXT_PUBLIC_BRAND_SHORT=Arthur Levy
+NEXT_PUBLIC_BRAND_PRIMARY_COLOR=#006B3F
+NEXT_PUBLIC_BRAND_PRIMARY_DARK=#004D2C
+NEXT_PUBLIC_LOGO_URL=/static/logo.png
+```
+
+---
+
+## Desenvolvimento
+
+Consulte [`ARCHITECTURE.md`](./ARCHITECTURE.md) para entender a arquitetura de serviços e os modelos de dados.
+O backlog completo de tarefas está em [`TASKS.md`](./TASKS.md).
+
+---
+
+## Licença
+
+Distribuído sob a licença MIT — veja [`LICENSE`](./LICENSE) para detalhes.
+
+Este projeto é um fork do [MicroRealEstate](https://github.com/microrealestate/microrealestate), mantido por [Camel Aissani](https://github.com/camelaissani), ao qual agradecemos pelo trabalho open-source.
