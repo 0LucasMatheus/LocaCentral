@@ -15,7 +15,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Clonar localmente
   - Adicionar CLAUDE.md, ARCHITECTURE.md e TASKS.md na raiz
 
-- [ ] **0.2** Subir o projeto base funcionando
+- [x] **0.2** Subir o projeto base funcionando
   - Copiar `.env.domain` para `.env`
   - Rodar `docker compose up`
   - Confirmar que abre em `localhost:8080/landlord`
