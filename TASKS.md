@@ -9,7 +9,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 0 — Setup inicial
 
-- [ ] **0.1** Fork e clone do MicroRealEstate
+- [x] **0.1** Fork e clone do MicroRealEstate
   - Fazer fork de https://github.com/microrealestate/microrealestate
   - Renomear para `locacentral` no GitHub
   - Clonar localmente
