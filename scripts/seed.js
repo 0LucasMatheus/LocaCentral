@@ -100,22 +100,23 @@ const Tenant   = mongoose.model('Occupant', TenantSchema);
 
 // ─── Rent computation ────────────────────────────────────────────────────────
 
-function computeRents(beginDate, endDate, rentAmount, expenses = [], paidUntil = null) {
-  const rents = {};
+function computeRents(beginDate, endDate, rentAmount, propertyName, expenses = [], paidUntil = null) {
+  const rents = [];
   const begin = moment(beginDate);
   const end   = moment(endDate);
   let current = begin.clone();
 
   while (current.isSameOrBefore(end, 'month')) {
-    const term = Number(current.format('YYYYMM') + '00');
+    // term format: YYYYMMDDHH — start of month, hour 00
+    const term = Number(current.clone().startOf('month').format('YYYYMMDDHH'));
     const expensesTotal = expenses.reduce((s, e) => s + (e.amount || 0), 0);
     const isPaid = paidUntil ? current.isSameOrBefore(moment(paidUntil), 'month') : false;
 
-    rents[term] = {
+    rents.push({
       term,
       month: current.month() + 1,
       year:  current.year(),
-      preTaxAmounts: [{ description: 'Aluguel', amount: rentAmount }],
+      preTaxAmounts: [{ description: propertyName, amount: rentAmount }],
       charges: expenses.map(e => ({ description: e.title, amount: e.amount })),
       discounts: [],
       debts: [],
@@ -134,7 +135,7 @@ function computeRents(beginDate, endDate, rentAmount, expenses = [], paidUntil =
         grandTotal:   rentAmount + expensesTotal,
         payment:      isPaid ? rentAmount + expensesTotal : 0,
       },
-    };
+    });
 
     current.add(1, 'month');
   }
@@ -267,7 +268,7 @@ async function seed() {
       expenses: expensesJoao,
       entryDate: beginJoao.toDate(),
     }],
-    rents: computeRents(beginJoao, endJoao, 2200, expensesJoao, paidJoao.toDate()),
+    rents: computeRents(beginJoao, endJoao, 2200, 'Casa das Flores', expensesJoao, paidJoao.toDate()),
     guaranty: 6600,
     stepperMode: false,
   });
@@ -294,7 +295,7 @@ async function seed() {
       expenses: expensesMaria,
       entryDate: beginMaria.toDate(),
     }],
-    rents: computeRents(beginMaria, endMaria, 1800, expensesMaria, paidMaria.toDate()),
+    rents: computeRents(beginMaria, endMaria, 1800, 'Apto Yunes', expensesMaria, paidMaria.toDate()),
     guaranty: 5400,
     stepperMode: false,
   });
@@ -320,7 +321,7 @@ async function seed() {
       expenses: [],
       entryDate: beginPedro.toDate(),
     }],
-    rents: computeRents(beginPedro, endPedro, 1500, [], paidPedro.toDate()),
+    rents: computeRents(beginPedro, endPedro, 1500, 'Casa Bela Vista', [], paidPedro.toDate()),
     guaranty: 4500,
     stepperMode: false,
   });
@@ -350,7 +351,7 @@ async function seed() {
       expenses: expensesAna,
       entryDate: beginAna.toDate(),
     }],
-    rents: computeRents(beginAna, endAna, 2500, expensesAna, paidAna.toDate()),
+    rents: computeRents(beginAna, endAna, 2500, 'Apto Centro Mogi', expensesAna, paidAna.toDate()),
     guaranty: 7500,
     stepperMode: false,
   });
@@ -386,7 +387,7 @@ async function seed() {
       expenses: expensesABC,
       entryDate: beginABC.toDate(),
     }],
-    rents: computeRents(beginABC, endABC, 3500, expensesABC, paidABC.toDate()),
+    rents: computeRents(beginABC, endABC, 3500, 'Loja Av. Paulista Mogi', expensesABC, paidABC.toDate()),
     guaranty: 10500,
     stepperMode: false,
   });
