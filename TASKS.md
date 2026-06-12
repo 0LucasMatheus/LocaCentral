@@ -186,14 +186,14 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 8 — Frontend painel da locadora
 
-- [ ] **8.1** Dashboard principal (inspirado no Unilocweb)
+- [x] **8.1** Dashboard principal (inspirado no Unilocweb)
   - Cards: contratos ativos, para reajuste, vencendo em 30 dias, vencidos
   - Cards financeiros: cobranças recebidas, a vencer, vencidas
   - Card inadimplentes: valor acumulado, nº de cobranças, nº de contratos
   - Gráfico evolução da carteira (contratos ativos por mês)
   - Gráfico índices (IGPM, IPCA) nos últimos 24 meses
 
-- [ ] **8.2** Tela de Proprietários (CRUD)
+- [x] **8.2** Tela de Proprietários (CRUD)
   - Listagem com busca e filtros
   - Formulário de cadastro com CEP autocomplete (ViaCEP)
   - Detalhe: imóveis vinculados, extrato de repasses
@@ -222,14 +222,14 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Seção: Dados do contrato (datas, valor, índice, multa)
   - Seção: Condições especiais
 
-- [ ] **8.7** Tela de Cobranças — listagem e emissão
+- [x] **8.7** Tela de Cobranças — listagem e emissão
   - Listagem por período com status visual
   - Botão "Gerar cobranças do mês"
   - Botão "Emitir boleto" por cobrança
   - Botão "Registrar pagamento" manual
   - Filtros por status, período, inquilino
 
-- [ ] **8.8** Tela de Reajustes pendentes
+- [x] **8.8** Tela de Reajustes pendentes
   - Listar contratos com reajuste no mês
   - Mostrar: índice, percentual, valor atual → valor novo
   - Botão "Aplicar reajuste"
@@ -238,15 +238,15 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 9 — Portal do inquilino
 
-- [ ] **9.1** Página de login do inquilino (OTP por email — já existe no MRE)
+- [x] **9.1** Página de login do inquilino (OTP por email — já existe no MRE)
   - Ajustar visual para white-label
   - Texto em pt-BR
 
-- [ ] **9.2** Página inicial do inquilino
+- [x] **9.2** Página inicial do inquilino
   - Dados do contrato ativo (imóvel, valor, vencimento)
   - Cobranças do mês atual e histórico
 
-- [ ] **9.3** Página de cobrança do inquilino
+- [x] **9.3** Página de cobrança do inquilino
   - Ver detalhes da cobrança (itens)
   - Botão para download/visualização do boleto
   - Status: pendente / pago / vencido
@@ -255,7 +255,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 10 — White-label e deploy
 
-- [ ] **10.1** Aplicar white-label completo no frontend
+- [x] **10.1** Aplicar white-label completo no frontend
   - Logo via env var
   - Cores primárias via CSS variables
   - Nome da empresa em todos os textos
