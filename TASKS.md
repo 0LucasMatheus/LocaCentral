@@ -265,7 +265,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Gera `.env` configurado para o cliente
   - Instrução de deploy na VPS
 
-- [ ] **10.3** Documentação de deploy
+- [x] **10.3** Documentação de deploy
   - README com passo a passo para instalar em VPS Ubuntu
   - Configuração de domínio + SSL com Nginx + Certbot
   - Backup do MongoDB

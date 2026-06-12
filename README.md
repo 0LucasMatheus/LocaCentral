@@ -57,7 +57,25 @@ O portal do inquilino em **http://localhost:8080/tenant**
 
 ---
 
+## Setup de novo cliente (automatizado)
+
+```shell
+./scripts/setup-client.sh
+```
+
+O script pergunta nome da empresa, cores, credenciais e gera o `.env` configurado com secrets seguros.
+
+---
+
 ## Deploy em VPS
+
+### Pré-requisitos na VPS
+
+```shell
+# Ubuntu 22.04+
+sudo apt update && sudo apt install -y docker.io docker-compose-plugin git
+sudo usermod -aG docker $USER && newgrp docker
+```
 
 ### IP fixo
 
@@ -71,7 +89,31 @@ sudo APP_DOMAIN=x.x.x.x docker-compose up -d
 sudo APP_DOMAIN=app.exemplo.com.br APP_PROTOCOL=https docker-compose --profile production up -d
 ```
 
-Aponte o DNS do domínio para o IP da VPS. O certificado SSL é emitido automaticamente.
+Aponte o DNS do domínio para o IP da VPS. O certificado SSL é emitido automaticamente via Caddy.
+
+### Alternativa: Nginx + Certbot (SSL manual)
+
+```nginx
+# /etc/nginx/sites-available/locacentral
+server {
+    listen 80;
+    server_name app.exemplo.com.br;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+```shell
+sudo ln -s /etc/nginx/sites-available/locacentral /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d app.exemplo.com.br
+```
 
 ---
 
