@@ -10,6 +10,13 @@ const LeaseSchema = new mongoose.Schema<CollectionTypes.Lease>({
   timeRange: { type: String, enum: ['days', 'weeks', 'months', 'years'] },
   active: Boolean,
 
+  // brasil — campos contratuais
+  contractType: { type: String, enum: ['determinado', 'indeterminado'], default: 'determinado' },
+  adjustmentIndex: { type: String, enum: ['IGPM', 'IPCA', 'INCC', 'IVAR', 'IGP-DI'] },
+  adjustmentMonth: Number,
+  penaltyMonths: { type: Number, default: 3 },
+  adminFeePercent: Number,
+  guaranteeType: { type: String, enum: ['fiador', 'caucao', 'seguro_fianca', 'titulo_capitalizacao'] },
   // ui state
   stepperMode: { type: Boolean, default: false }
 });

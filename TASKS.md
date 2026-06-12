@@ -21,7 +21,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Confirmar que abre em `localhost:8080/landlord`
   - Criar realm de teste "Arthur Levy Imóveis"
 
-- [ ] **0.3** Criar `config/branding.js` e variáveis white-label
+- [x] **0.3** Criar `config/branding.js` e variáveis white-label
   - Criar arquivo `config/branding.js` conforme ARCHITECTURE.md
   - Adicionar variáveis `NEXT_PUBLIC_BRAND_*` no `.env.example`
   - Testar que o nome da marca aparece no frontend via env var
@@ -30,19 +30,19 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 1 — Extensões nos modelos existentes
 
-- [ ] **1.1** Estender modelo `Occupant` (inquilino) com campos brasileiros
+- [x] **1.1** Estender modelo `Occupant` (inquilino) com campos brasileiros
   - Adicionar: `cpf`, `rg`, `rgIssuer`, `maritalStatus`, `nationality`, `profession`, `spouseName`, `spouseCpf`
   - Adicionar enum `maritalStatus`: solteiro | casado | divorciado | viúvo | união estável
   - Atualizar validações no manager `occupant.js`
   - Testar via API: criar inquilino com CPF
 
-- [ ] **1.2** Estender modelo `Property` (imóvel) com campos brasileiros
+- [x] **1.2** Estender modelo `Property` (imóvel) com campos brasileiros
   - Adicionar: `registrationNumber` (matrícula), `iptuNumber`, `iptuValue`, `condominiumValue`, `propertyType`
   - Adicionar enum `propertyType`: casa | apartamento | comercial | terreno | sala | galpao
   - Atualizar manager `property.js`
   - Testar via API
 
-- [ ] **1.3** Estender modelo `Lease` (contrato) com campos brasileiros
+- [x] **1.3** Estender modelo `Lease` (contrato) com campos brasileiros
   - Adicionar: `contractType` (determinado | indeterminado), `adjustmentIndex` (IGPM | IPCA | INCC | IVAR | IGP-DI), `adjustmentMonth` (mês aniversário), `penaltyMonths` (default: 3), `adminFeePercent`, `guaranteeType`
   - Manter compatibilidade com campos existentes
   - Testar via API
@@ -51,22 +51,22 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 2 — Modelo Owner (proprietário)
 
-- [ ] **2.1** Criar modelo `Owner`
+- [x] **2.1** Criar modelo `Owner`
   - Criar `services/api/src/models/owner.js` conforme schema em ARCHITECTURE.md
   - Incluir campos: nome, CPF/CNPJ, RG, email, telefone, endereço completo, dados bancários, preferência de recebimento
   - Sempre com `realmId` e `archived`
 
-- [ ] **2.2** Criar manager `owner.js` com CRUD completo
+- [x] **2.2** Criar manager `owner.js` com CRUD completo
   - Criar `services/api/src/managers/owner.js`
   - Funções: `create`, `update`, `remove` (soft delete), `findAll`, `findOne`
   - Seguir padrão do `services/api/src/managers/occupant.js`
 
-- [ ] **2.3** Criar rotas REST para Owner
+- [x] **2.3** Criar rotas REST para Owner
   - Adicionar rotas em `services/api/src/routes/`
   - GET /api/v2/owners, POST, GET/:id, PUT/:id, DELETE/:id
   - Proteger com middleware de auth existente
 
-- [ ] **2.4** Vincular Owner ao Property
+- [x] **2.4** Vincular Owner ao Property
   - Adicionar campo `ownerId: ObjectId` no modelo Property
   - Atualizar manager de property para aceitar ownerId
   - Testar: criar proprietário → criar imóvel vinculado ao proprietário
@@ -75,12 +75,12 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 3 — Modelo Guarantee (garantia)
 
-- [ ] **3.1** Criar modelo `Guarantee`
+- [x] **3.1** Criar modelo `Guarantee`
   - Criar `services/api/src/models/guarantee.js` conforme ARCHITECTURE.md
   - Suportar todos os 4 tipos: fiador, caução, seguro fiança, título capitalização
   - Campos condicionais por tipo
 
-- [ ] **3.2** Criar manager e rotas para Guarantee
+- [x] **3.2** Criar manager e rotas para Guarantee
   - CRUD básico vinculado ao leaseId
   - Endpoint: GET /api/v2/leases/:id/guarantee, POST, PUT
 
@@ -88,25 +88,25 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 4 — Engine de cobranças mensais
 
-- [ ] **4.1** Criar modelo `MonthlyCharge`
+- [x] **4.1** Criar modelo `MonthlyCharge`
   - Criar `services/api/src/models/monthlycharge.js` conforme ARCHITECTURE.md
   - Items array com type, description, amount
   - Status machine: pendente → emitido → pago | vencido | cancelado
 
-- [ ] **4.2** Criar manager `monthlybilling.js`
+- [x] **4.2** Criar manager `monthlybilling.js`
   - Função `generateMonthlyCharges(realmId, period)`: gera cobranças para todos os contratos ativos do período
   - Função `addItem(chargeId, item)`: adiciona item (multa, desconto, etc.)
   - Função `registerPayment(chargeId, paymentData)`: baixa manual
   - Calcular total automaticamente ao salvar
 
-- [ ] **4.3** Criar rotas REST para MonthlyCharge
+- [x] **4.3** Criar rotas REST para MonthlyCharge
   - GET /api/v2/charges (filtros: period, status, occupantId, propertyId)
   - POST /api/v2/charges/generate
   - GET /api/v2/charges/:id
   - PUT /api/v2/charges/:id
   - POST /api/v2/charges/:id/pay
 
-- [ ] **4.4** Cron job de geração automática de cobranças
+- [x] **4.4** Cron job de geração automática de cobranças
   - Rodar todo dia 1 do mês às 06:00
   - Gerar cobranças do mês corrente para todos os contratos ativos
   - Usar biblioteca `node-cron` (já presente no projeto)
@@ -116,7 +116,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 5 — Integração Cora (boletos)
 
-- [ ] **5.1** Criar módulo de integração Cora
+- [x] **5.1** Criar módulo de integração Cora
   - Criar `services/api/src/integrations/cora.js`
   - Função `authenticate()`: OAuth2 client credentials
   - Função `createInvoice(chargeData)`: criar boleto
@@ -124,12 +124,12 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Usar env vars: CORA_CLIENT_ID, CORA_CLIENT_SECRET, CORA_ENVIRONMENT
   - Testar em sandbox da Cora
 
-- [ ] **5.2** Endpoint para emissão de boleto
+- [x] **5.2** Endpoint para emissão de boleto
   - POST /api/v2/charges/:id/boleto
   - Chamar Cora, salvar boletoId e boletoUrl na charge
   - Enviar email ao inquilino com link do boleto via emailer existente
 
-- [ ] **5.3** Webhook de confirmação de pagamento
+- [x] **5.3** Webhook de confirmação de pagamento
   - Criar `services/api/src/routes/webhooks/cora.js`
   - Receber POST da Cora ao confirmar pagamento
   - Atualizar MonthlyCharge: status pago, paidAt, paidAmount
@@ -139,24 +139,24 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 6 — Reajuste por índice
 
-- [ ] **6.1** Criar serviço de busca de índices
+- [x] **6.1** Criar serviço de busca de índices
   - Criar `services/api/src/integrations/indexes.js`
   - Função `getIPCA(period)`: buscar IPCA do IBGE (API SIDRA)
   - Função `getIGPM(period)`: buscar IGPM da FGV
   - Cache no Redis por 24h para não sobrecarregar APIs
 
-- [ ] **6.2** Criar modelo e manager `IndexAdjustment`
+- [x] **6.2** Criar modelo e manager `IndexAdjustment`
   - Criar modelo conforme ARCHITECTURE.md
   - Função `calculateAdjustment(leaseId)`: calcula novo valor com base no índice
   - Função `applyAdjustment(leaseId)`: aplica e registra histórico
 
-- [ ] **6.3** Cron job de reajuste automático
+- [x] **6.3** Cron job de reajuste automático
   - Rodar diariamente
   - Verificar contratos com aniversário hoje
   - Criar registro `IndexAdjustment` com status "pendente"
   - NÃO aplicar automaticamente — apenas notificar a locadora
 
-- [ ] **6.4** Endpoint para listar e aplicar reajustes pendentes
+- [x] **6.4** Endpoint para listar e aplicar reajustes pendentes
   - GET /api/v2/adjustments/pending
   - POST /api/v2/adjustments/:id/apply
 
@@ -260,7 +260,7 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
   - Cores primárias via CSS variables
   - Nome da empresa em todos os textos
 
-- [ ] **10.2** Script de setup para nova instalação de cliente
+- [x] **10.2** Script de setup para nova instalação de cliente
   - Script `scripts/setup-client.sh` que pergunta: nome, cores, logo, credenciais
   - Gera `.env` configurado para o cliente
   - Instrução de deploy na VPS

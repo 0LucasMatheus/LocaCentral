@@ -21,7 +21,14 @@ const PropertySchema = new mongoose.Schema<CollectionTypes.Property>({
     country: String
   },
 
-  price: Number
+  price: Number,
+  // brasil — dados do imóvel
+  propertyType: { type: String, enum: ['casa', 'apartamento', 'comercial', 'terreno', 'sala', 'galpao'] },
+  registrationNumber: String,
+  iptuNumber: String,
+  iptuValue: Number,
+  condominiumValue: Number,
+  ownerIdBr: String
 });
 export default mongoose.model<CollectionTypes.Property>(
   'Property',

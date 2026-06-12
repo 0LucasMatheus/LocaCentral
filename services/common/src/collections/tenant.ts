@@ -127,6 +127,15 @@ const TenantSchema = new mongoose.Schema<CollectionTypes.Tenant>({
   guaranty: Number,
   guarantyPayback: Number,
 
+  // brasil — dados pessoais
+  cpf: String,
+  rg: String,
+  rgIssuer: String,
+  maritalStatus: { type: String, enum: ['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_estavel'] },
+  nationality: String,
+  profession: String,
+  spouseName: String,
+  spouseCpf: String,
   // ui state
   stepperMode: { type: Boolean, default: false }
 });

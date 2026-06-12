@@ -1,0 +1,6 @@
+services:
+  api:
+    volumes:
+      - ./backup:/usr/app/backup
+      - ./services/api/src:/usr/app/services/api/src
+      - ./services/common/dist:/usr/app/services/common/dist
