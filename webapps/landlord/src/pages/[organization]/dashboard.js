@@ -5,6 +5,7 @@ import {
   fetchTenants,
   QueryKeys
 } from '../../utils/restcalls';
+import BrazilianCards from '../../components/dashboard/BrazilianCards';
 import GeneralFigures from '../../components/dashboard/GeneralFigures';
 import MonthFigures from '../../components/dashboard/MonthFigures';
 import Page from '../../components/Page';
@@ -62,6 +63,7 @@ function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <Shortcuts className="md:col-span-5" />
+            <BrazilianCards className="md:col-span-5" />
             <MonthFigures className="md:col-span-3" />
             <GeneralFigures className="md:col-span-2" />
             <YearFigures className="md:col-span-5" />

@@ -1,8 +1,11 @@
 import {
+  LuBuilding2,
   LuKeyRound,
   LuLayoutDashboard,
   LuMenu,
+  LuReceipt,
   LuSettings,
+  LuTrendingUp,
   LuUserCircle,
   LuWallet
 } from 'react-icons/lu';
@@ -57,6 +60,27 @@ const menuItems = [
     pathname: '/properties',
     Icon: LuKeyRound,
     dataCy: 'propertiesNav'
+  },
+  {
+    key: 'owners',
+    labelId: 'Proprietários',
+    pathname: '/owners',
+    Icon: LuBuilding2,
+    dataCy: 'ownersNav'
+  },
+  {
+    key: 'charges',
+    labelId: 'Cobranças',
+    pathname: '/charges',
+    Icon: LuReceipt,
+    dataCy: 'chargesNav'
+  },
+  {
+    key: 'adjustments',
+    labelId: 'Reajustes',
+    pathname: '/adjustments',
+    Icon: LuTrendingUp,
+    dataCy: 'adjustmentsNav'
   },
   {
     key: 'accounting',

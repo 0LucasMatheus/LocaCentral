@@ -25,7 +25,7 @@ import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
-const APP_TITLE = [config.APP_NAME, 'Landlord'];
+const APP_TITLE = [config.APP_NAME, 'Locadora'];
 if (config.NODE_ENV === 'development') {
   APP_TITLE.push('DEV');
 } else if (config.DEMO_MODE) {
