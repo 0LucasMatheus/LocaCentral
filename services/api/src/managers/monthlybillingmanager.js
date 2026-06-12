@@ -113,15 +113,38 @@ export async function generateMonthlyCharges(req, res) {
 
 export async function all(req, res) {
   const realm = req.realm;
-  const filter = { realmId: String(realm._id) };
+  const realmId = String(realm._id);
+  const filter = { realmId };
 
   if (req.query.period) filter.period = req.query.period;
   if (req.query.status) filter.status = req.query.status;
   if (req.query.occupantId) filter.occupantId = req.query.occupantId;
   if (req.query.propertyId) filter.propertyId = req.query.propertyId;
 
-  const charges = await MonthlyCharge.find(filter).sort({ period: -1, createdAt: -1 });
-  res.json(charges);
+  const charges = await MonthlyCharge.find(filter).sort({ period: -1, createdAt: -1 }).lean();
+
+  const occupantIds = [...new Set(charges.map((c) => c.occupantId).filter(Boolean))];
+  const propertyIds = [...new Set(charges.map((c) => c.propertyId).filter(Boolean))];
+
+  const [occupants, properties] = await Promise.all([
+    Collections.Tenant.find({ realmId, _id: { $in: occupantIds } }).lean(),
+    Collections.Property.find({ realmId, _id: { $in: propertyIds } }).lean()
+  ]);
+
+  const occupantMap = Object.fromEntries(occupants.map((o) => [String(o._id), o]));
+  const propertyMap = Object.fromEntries(properties.map((p) => [String(p._id), p]));
+
+  const enriched = charges.map((c) => {
+    const occupant = occupantMap[c.occupantId];
+    const property = propertyMap[c.propertyId];
+    return {
+      ...c,
+      occupantName: occupant ? `${occupant.name} ${occupant.lastName || ''}`.trim() : null,
+      propertyName: property ? (property.name || property.type || property._id) : null
+    };
+  });
+
+  res.json(enriched);
 }
 
 export async function one(req, res) {
