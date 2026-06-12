@@ -8,3 +8,29 @@ services:
     volumes:
       - ./services/pdfgenerator/templates:/usr/app/services/pdfgenerator/templates
       - ./services/pdfgenerator/data:/usr/app/services/pdfgenerator/data
+  landlord-frontend:
+    build:
+      context: .
+      dockerfile: webapps/landlord/locacentral.Dockerfile
+    environment:
+      BASE_PATH: /landlord
+      PORT: 8180
+      DOCKER_GATEWAY_URL: http://gateway:8080
+      CORS_ENABLED: 'true'
+      GATEWAY_URL: http://localhost:8080
+      NODE_ENV: development
+      SIGNUP: 'true'
+      NEXT_PUBLIC_BRAND_NAME: ${NEXT_PUBLIC_BRAND_NAME:-LocaCentral}
+      NEXT_PUBLIC_BRAND_SHORT: ${NEXT_PUBLIC_BRAND_SHORT:-LocaCentral}
+      NEXT_PUBLIC_BRAND_PRIMARY_COLOR: ${NEXT_PUBLIC_BRAND_PRIMARY_COLOR:-#1B4FCC}
+      NEXT_PUBLIC_BRAND_PRIMARY_DARK: ${NEXT_PUBLIC_BRAND_PRIMARY_DARK:-#1340A8}
+    volumes:
+      - ./webapps/landlord/src:/usr/app/webapps/landlord/src
+      - ./webapps/landlord/public:/usr/app/webapps/landlord/public
+      - ./webapps/commonui:/usr/app/webapps/commonui
+      - ./webapps/landlord/next.config.js:/usr/app/webapps/landlord/next.config.js
+      - ./webapps/landlord/i18n.js:/usr/app/webapps/landlord/i18n.js
+      - ./webapps/landlord/tailwind.config.js:/usr/app/webapps/landlord/tailwind.config.js
+      - ./webapps/landlord/postcss.config.js:/usr/app/webapps/landlord/postcss.config.js
+      - ./webapps/landlord/tsconfig.json:/usr/app/webapps/landlord/tsconfig.json
+      - ./webapps/landlord/components.json:/usr/app/webapps/landlord/components.json
