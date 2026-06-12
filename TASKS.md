@@ -164,13 +164,13 @@ Antes de cada tarefa, diga ao Claude: "Leia o CLAUDE.md e o ARCHITECTURE.md ante
 
 ## FASE 7 — Templates de contrato e PDF
 
-- [ ] **7.1** Criar template base de contrato de locação
+- [x] **7.1** Criar template base de contrato de locação
   - Criar template HTML em `services/pdfgenerator/src/templates/lease-br/`
   - Variáveis: [[prop_nome]], [[inq_nome]], [[imovel_endereco]], [[valor_aluguel]], [[data_inicio]], [[data_fim]], [[fiador_nome]], [[imob_cnpj]], etc.
   - Seguir padrão visual do Unilocweb (visto nos prints)
   - Testar geração do PDF com dados reais
 
-- [ ] **7.2** Endpoint para gerar PDF do contrato
+- [x] **7.2** Endpoint para gerar PDF do contrato
   - POST /api/v2/leases/:id/document/pdf
   - Montar dados do contrato (lease + occupant + owner + property + guarantee)
   - Chamar pdfgenerator com template e dados

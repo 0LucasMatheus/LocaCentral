@@ -11,6 +11,7 @@ import * as guaranteeManager from './managers/guaranteemanager.js';
 import * as monthlyBillingManager from './managers/monthlybillingmanager.js';
 import * as indexAdjustmentManager from './managers/indexadjustmentmanager.js';
 import * as boletoManager from './managers/boletomanager.js';
+import * as contractPdfManager from './managers/contractpdfmanager.js';
 import { Middlewares, Service } from '@microrealestate/common';
 import express from 'express';
 
@@ -109,6 +110,9 @@ export default function routes() {
   chargesRouter.post('/:id/pay', Middlewares.asyncWrapper(monthlyBillingManager.registerPayment));
   chargesRouter.post('/:id/boleto', Middlewares.asyncWrapper(boletoManager.emitBoleto));
   router.use('/charges', chargesRouter);
+
+  // ── Contract PDF (fase 7.2) ─────────────────────────────────────────────────
+  occupantsRouter.post('/:id/contract/pdf', Middlewares.asyncWrapper(contractPdfManager.generateContractPdf));
 
   // ── Adjustments (reajustes) ─────────────────────────────────────────────────
   const adjustmentsRouter = express.Router();

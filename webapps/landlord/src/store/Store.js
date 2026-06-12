@@ -8,6 +8,7 @@ import Document from './Document';
 import Lease from './Lease';
 import moment from 'moment';
 import Organization from './Organization';
+import Owner from './Owner';
 import Property from './Property';
 import Rent from './Rent';
 import Template from './Template';
@@ -27,6 +28,7 @@ export default class Store {
     this.document = new Document();
     this.dashboard = new Dashboard();
     this.accounting = new Accounting();
+    this.owner = new Owner();
 
     makeObservable(this, {
       user: observable,
@@ -39,7 +41,8 @@ export default class Store {
       document: observable,
       dashboard: observable,
       accounting: observable,
-      appHistory: observable
+      appHistory: observable,
+      owner: observable
     });
   }
 

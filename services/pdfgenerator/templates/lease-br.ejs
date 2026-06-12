@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #222; margin: 0; padding: 20px; }
+    h1 { text-align: center; font-size: 14pt; text-transform: uppercase; margin-bottom: 4px; }
+    h2 { font-size: 12pt; margin-top: 20px; margin-bottom: 6px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header img { max-height: 60px; }
+    .imobiliaria { text-align: center; font-weight: bold; font-size: 12pt; }
+    .cnpj { text-align: center; font-size: 10pt; color: #555; }
+    .section { margin-bottom: 14px; }
+    .field { margin-bottom: 6px; }
+    .label { font-weight: bold; }
+    .clause { text-align: justify; margin-bottom: 10px; line-height: 1.5; }
+    .clause-num { font-weight: bold; }
+    .signatures { margin-top: 60px; display: flex; justify-content: space-between; }
+    .signature-block { text-align: center; width: 40%; }
+    .signature-line { border-top: 1px solid #222; margin-top: 50px; padding-top: 6px; font-size: 10pt; }
+    .footer { text-align: center; font-size: 9pt; color: #888; margin-top: 40px; border-top: 1px solid #ccc; padding-top: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { padding: 4px 8px; border: 1px solid #ddd; }
+    th { background: #f5f5f5; font-weight: bold; }
+    @media print { body { padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <% if (logoUrl) { %><img src="<%= logoUrl %>" alt="logo"><% } %>
+    <div class="imobiliaria"><%= landlord.name %></div>
+    <% if (landlord.companyInfo && landlord.companyInfo.ein) { %>
+    <div class="cnpj">CNPJ: <%= landlord.companyInfo.ein %></div>
+    <% } %>
+  </div>
+
+  <h1>Contrato de Locação Residencial</h1>
+  <div style="text-align:center; font-size:10pt; color:#666; margin-bottom:20px;">
+    Referência: <%= lease.reference %> &nbsp;|&nbsp; <%= today %>
+  </div>
+
+  <h2>Partes Contratantes</h2>
+  <div class="section">
+    <div class="field"><span class="label">LOCADORA (Imobiliária):</span> <%= landlord.name %></div>
+    <% if (landlord.companyInfo && landlord.companyInfo.ein) { %>
+    <div class="field"><span class="label">CNPJ:</span> <%= landlord.companyInfo.ein %></div>
+    <% } %>
+    <% if (landlord.addresses && landlord.addresses.length) { %>
+    <div class="field"><span class="label">Endereço:</span> <%= landlord.addresses[0].street1 %>, <%= landlord.addresses[0].city %>/<%= landlord.addresses[0].state %></div>
+    <% } %>
+  </div>
+
+  <div class="section">
+    <div class="field"><span class="label">LOCATÁRIO:</span> <%= tenant.name %></div>
+    <% if (tenant.cpf) { %><div class="field"><span class="label">CPF:</span> <%= tenant.cpf %></div><% } %>
+    <% if (tenant.rg) { %><div class="field"><span class="label">RG:</span> <%= tenant.rg %> <%= tenant.rgIssuer || '' %></div><% } %>
+    <% if (tenant.nationality) { %><div class="field"><span class="label">Nacionalidade:</span> <%= tenant.nationality %></div><% } %>
+    <% if (tenant.profession) { %><div class="field"><span class="label">Profissão:</span> <%= tenant.profession %></div><% } %>
+    <% if (tenant.maritalStatus) { %><div class="field"><span class="label">Estado civil:</span> <%= tenant.maritalStatus %></div><% } %>
+    <div class="field"><span class="label">Endereço:</span> <%= tenant.street1 %>, <%= tenant.city %></div>
+    <% if (tenant.contacts && tenant.contacts.length) { %>
+    <div class="field"><span class="label">Contato:</span> <%= tenant.contacts[0].email %> | <%= tenant.contacts[0].phone %></div>
+    <% } %>
+  </div>
+
+  <% if (owner) { %>
+  <div class="section">
+    <div class="field"><span class="label">PROPRIETÁRIO:</span> <%= owner.name %></div>
+    <% if (owner.cpf) { %><div class="field"><span class="label">CPF:</span> <%= owner.cpf %></div><% } %>
+    <% if (owner.cnpj) { %><div class="field"><span class="label">CNPJ:</span> <%= owner.cnpj %></div><% } %>
+    <% if (owner.email) { %><div class="field"><span class="label">Email:</span> <%= owner.email %></div><% } %>
+  </div>
+  <% } %>
+
+  <h2>Imóvel Locado</h2>
+  <div class="section">
+    <div class="field"><span class="label">Endereço:</span> <%= property.address.street1 %><% if (property.address.street2) { %>, <%= property.address.street2 %><% } %>, <%= property.address.city %>/<%= property.address.state %> — CEP: <%= property.address.zipCode %></div>
+    <% if (property.registrationNumber) { %><div class="field"><span class="label">Matrícula:</span> <%= property.registrationNumber %></div><% } %>
+    <% if (property.iptuNumber) { %><div class="field"><span class="label">Nº IPTU:</span> <%= property.iptuNumber %></div><% } %>
+    <% if (property.surface) { %><div class="field"><span class="label">Área:</span> <%= property.surface %> m²</div><% } %>
+    <div class="field"><span class="label">Tipo:</span> <%= property.propertyType || property.type %></div>
+  </div>
+
+  <h2>Condições do Contrato</h2>
+  <div class="section">
+    <table>
+      <tr><th>Item</th><th>Valor</th></tr>
+      <tr><td>Aluguel mensal</td><td><%= rentFormatted %></td></tr>
+      <% if (property.iptuValue) { %><tr><td>IPTU (mensal)</td><td>R$ <%= property.iptuValue.toFixed(2).replace('.', ',') %></td></tr><% } %>
+      <% if (property.condominiumValue) { %><tr><td>Condomínio</td><td>R$ <%= property.condominiumValue.toFixed(2).replace('.', ',') %></td></tr><% } %>
+      <tr><td><strong>Total mensal</strong></td><td><strong><%= totalFormatted %></strong></td></tr>
+      <tr><td>Início do contrato</td><td><%= beginDate %></td></tr>
+      <tr><td>Término do contrato</td><td><%= endDate %></td></tr>
+      <tr><td>Prazo (meses)</td><td><%= numberOfTerms %></td></tr>
+      <tr><td>Vencimento do aluguel</td><td>Dia 5 de cada mês</td></tr>
+      <tr><td>Índice de reajuste</td><td><%= adjustmentIndex || 'IGPM' %></td></tr>
+      <tr><td>Multa rescisória</td><td><%= penaltyMonths || 3 %> aluguéis (proporcional)</td></tr>
+    </table>
+  </div>
+
+  <% if (guarantee) { %>
+  <h2>Garantia Locatícia</h2>
+  <div class="section">
+    <div class="field"><span class="label">Tipo:</span> <%=
+      guarantee.type === 'fiador' ? 'Fiança (Fiador)' :
+      guarantee.type === 'caucao' ? 'Caução em dinheiro' :
+      guarantee.type === 'seguro_fianca' ? 'Seguro Fiança' :
+      'Título de Capitalização'
+    %></div>
+    <% if (guarantee.type === 'fiador' && guarantee.guarantorName) { %>
+    <div class="field"><span class="label">Fiador:</span> <%= guarantee.guarantorName %></div>
+    <% if (guarantee.guarantorCpf) { %><div class="field"><span class="label">CPF Fiador:</span> <%= guarantee.guarantorCpf %></div><% } %>
+    <% } %>
+    <% if (guarantee.type === 'caucao') { %>
+    <div class="field"><span class="label">Valor da caução:</span> R$ <%= (guarantee.cautionValue || 0).toFixed(2).replace('.', ',') %></div>
+    <% } %>
+    <% if (guarantee.type === 'seguro_fianca') { %>
+    <div class="field"><span class="label">Seguradora:</span> <%= guarantee.insuranceCompany %></div>
+    <div class="field"><span class="label">Apólice:</span> <%= guarantee.insurancePolicyNumber %></div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <h2>Cláusulas Gerais</h2>
+
+  <div class="clause"><span class="clause-num">1.</span> O imóvel destina-se exclusivamente à residência do(s) locatário(s) e sua família, sendo vedada a sublocação total ou parcial sem autorização prévia e escrita da locadora.</div>
+
+  <div class="clause"><span class="clause-num">2.</span> O aluguel deverá ser pago até o 5º (quinto) dia útil de cada mês. Após este prazo, incidirá multa de 10% sobre o valor do aluguel, acrescida de juros moratórios de 1% ao mês, conforme art. 52 da Lei nº 8.245/91.</div>
+
+  <div class="clause"><span class="clause-num">3.</span> O valor do aluguel será reajustado anualmente com base na variação do índice <%= adjustmentIndex || 'IGPM' %> (art. 18 da Lei nº 8.245/91), aplicado na data de aniversário do contrato.</div>
+
+  <div class="clause"><span class="clause-num">4.</span> O locatário é responsável pela conservação do imóvel e entregará o imóvel ao término do contrato nas mesmas condições em que o recebeu, conforme vistoria anexa.</div>
+
+  <div class="clause"><span class="clause-num">5.</span> A rescisão antecipada pelo locatário implicará multa proporcional ao tempo restante, calculada nos termos do art. 4º da Lei nº 8.245/91, limitada a 3 (três) meses de aluguel.</div>
+
+  <div class="clause"><span class="clause-num">6.</span> O locatário se responsabiliza pelas despesas de consumo de água, energia elétrica, gás e demais serviços de utilidade pública do imóvel locado.</div>
+
+  <div class="clause"><span class="clause-num">7.</span> A locadora poderá retomar o imóvel ao término do prazo, mediante notificação com antecedência mínima de 30 (trinta) dias, conforme art. 46 da Lei nº 8.245/91.</div>
+
+  <div class="clause"><span class="clause-num">8.</span> Fica eleito o foro da comarca de <%= property.address.city || 'Suzano' %>/SP para dirimir quaisquer questões oriundas do presente contrato, renunciando expressamente a qualquer outro, por mais privilegiado que seja.</div>
+
+  <div style="margin-top: 30px; text-align: center;">
+    <%= property.address.city || 'Suzano' %>, <%= today %>
+  </div>
+
+  <div class="signatures">
+    <div class="signature-block">
+      <div class="signature-line"><%= landlord.name %><br>LOCADORA / IMOBILIÁRIA</div>
+    </div>
+    <div class="signature-block">
+      <div class="signature-line"><%= tenant.name %><br>LOCATÁRIO</div>
+    </div>
+  </div>
+
+  <% if (owner) { %>
+  <div class="signatures" style="margin-top: 40px;">
+    <div class="signature-block">
+      <div class="signature-line"><%= owner.name %><br>PROPRIETÁRIO</div>
+    </div>
+    <% if (guarantee && guarantee.type === 'fiador' && guarantee.guarantorName) { %>
+    <div class="signature-block">
+      <div class="signature-line"><%= guarantee.guarantorName %><br>FIADOR</div>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+
+  <div class="footer">
+    Contrato gerado em <%= today %> | <%= landlord.name %>
+  </div>
+</body>
+</html>

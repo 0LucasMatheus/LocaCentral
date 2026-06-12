@@ -4,3 +4,7 @@ services:
       - ./backup:/usr/app/backup
       - ./services/api/src:/usr/app/services/api/src
       - ./services/common/dist:/usr/app/services/common/dist
+  pdfgenerator:
+    volumes:
+      - ./services/pdfgenerator/templates:/usr/app/services/pdfgenerator/templates
+      - ./services/pdfgenerator/data:/usr/app/services/pdfgenerator/data
