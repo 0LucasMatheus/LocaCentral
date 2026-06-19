@@ -17,6 +17,10 @@ const LeaseSchema = new mongoose.Schema<CollectionTypes.Lease>({
   penaltyMonths: { type: Number, default: 3 },
   adminFeePercent: Number,
   guaranteeType: { type: String, enum: ['fiador', 'caucao', 'seguro_fianca', 'titulo_capitalizacao'] },
+  // prazo de vencimento
+  dueDay: { type: Number, default: 5 },                          // dia do mês ou Nth dia útil
+  dueType: { type: String, enum: ['fixo', 'util'], default: 'fixo' }, // dia fixo ou dia útil
+  boletoValidityDays: { type: Number, default: 5 },              // dias após vencimento que o boleto ainda é pagável
   // ui state
   stepperMode: { type: Boolean, default: false }
 });

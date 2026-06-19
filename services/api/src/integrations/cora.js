@@ -58,6 +58,13 @@ export async function createInvoice(chargeData) {
 
   const token = await authenticate();
 
+  // Data limite para pagamento após o vencimento (padrão 5 dias)
+  const validityDays = chargeData.boletoValidityDays ?? 5;
+  const dueDate = new Date(chargeData.dueDate);
+  const expirationDate = new Date(dueDate);
+  expirationDate.setDate(expirationDate.getDate() + validityDays);
+  const expirationDateStr = expirationDate.toISOString().split('T')[0];
+
   const payload = {
     code: chargeData.chargeId,
     services: [
@@ -68,6 +75,7 @@ export async function createInvoice(chargeData) {
     ],
     payment_terms: {
       due_date: chargeData.dueDate,
+      expiration_date: expirationDateStr,
       fine: { date: chargeData.dueDate, modality: 'FIXED', amount: 0 },
       interest: { modality: 'DAILY_PERCENTAGE', amount: 0.033 }
     },

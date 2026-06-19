@@ -14,7 +14,10 @@ export async function emitBoleto(req, res) {
   if (charge.status === 'pago') throw new ServiceError('charge already paid', 409);
   if (charge.boletoId) throw new ServiceError('boleto already issued', 409);
 
-  const occupant = await Collections.Tenant.findById(charge.occupantId).lean();
+  const [occupant, lease] = await Promise.all([
+    Collections.Tenant.findById(charge.occupantId).lean(),
+    charge.leaseId ? Collections.Lease.findById(charge.leaseId).lean() : null
+  ]);
   if (!occupant) throw new ServiceError('tenant not found', 404);
 
   const contact = occupant.contacts?.[0] || {};
@@ -24,6 +27,7 @@ export async function emitBoleto(req, res) {
     dueDate: charge.dueDate
       ? charge.dueDate.toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0],
+    boletoValidityDays: lease?.boletoValidityDays ?? 5,
     payerName: occupant.name,
     payerEmail: contact.email || '',
     payerDocument: occupant.cpf || '',

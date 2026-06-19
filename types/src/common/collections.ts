@@ -129,6 +129,9 @@ export namespace CollectionTypes {
     timeRange: LeaseTimeRange;
     active: boolean;
     stepperMode: boolean;
+    dueDay: number;
+    dueType: 'fixo' | 'util';
+    boletoValidityDays: number;
   };
 
   export type Property = {

@@ -1,6 +1,7 @@
 import MonthlyCharge from '../models/monthlycharge.js';
 import { Collections, ServiceError } from '@microrealestate/common';
 import moment from 'moment';
+import { calcDueDate } from '../utils/businessdays.js';
 
 function _buildItems(occupant) {
   const items = [];
@@ -33,7 +34,6 @@ function _guessExpenseType(title = '') {
 export async function generateMonthlyChargesAuto(realmId, period) {
   const p = period || moment().format('YYYY-MM');
   const [year, month] = p.split('-').map(Number);
-  const dueDate = moment({ year, month: month - 1, day: 5 }).toDate();
 
   const occupants = await Collections.Tenant.find({ realmId }).lean();
   const now = moment();
@@ -42,11 +42,23 @@ export async function generateMonthlyChargesAuto(realmId, period) {
     return end.isSameOrAfter(now, 'month');
   });
 
+  // Carrega todos os leases necessários de uma vez
+  const leaseIds = [...new Set(activeOccupants.map((o) => String(o.leaseId)).filter(Boolean))];
+  const leases = await Collections.Lease.find({ _id: { $in: leaseIds } }).lean();
+  const leaseMap = Object.fromEntries(leases.map((l) => [String(l._id), l]));
+
   for (const occupant of activeOccupants) {
     const prop = occupant.properties?.[0];
     if (!prop) continue;
+
     const exists = await MonthlyCharge.findOne({ realmId, occupantId: String(occupant._id), period: p });
     if (exists) continue;
+
+    const lease = leaseMap[String(occupant.leaseId)] || {};
+    const dueDay = lease.dueDay || 5;
+    const dueType = lease.dueType || 'fixo';
+    const dueDate = calcDueDate(year, month, dueDay, dueType);
+
     const items = _buildItems(occupant);
     await MonthlyCharge.create({
       realmId,
@@ -66,8 +78,6 @@ export async function generateMonthlyCharges(req, res) {
   const realmId = String(realm._id);
   const period = req.body.period || moment().format('YYYY-MM');
   const [year, month] = period.split('-').map(Number);
-  const dueDay = req.body.dueDay || 5;
-  const dueDate = moment({ year, month: month - 1, day: dueDay }).toDate();
 
   const occupants = await Collections.Tenant.find({ realmId }).lean();
   const now = moment();
@@ -76,6 +86,10 @@ export async function generateMonthlyCharges(req, res) {
     return end.isSameOrAfter(now, 'month');
   });
 
+  const leaseIds = [...new Set(activeOccupants.map((o) => String(o.leaseId)).filter(Boolean))];
+  const leases = await Collections.Lease.find({ _id: { $in: leaseIds } }).lean();
+  const leaseMap = Object.fromEntries(leases.map((l) => [String(l._id), l]));
+
   const created = [];
   const skipped = [];
 
@@ -83,16 +97,16 @@ export async function generateMonthlyCharges(req, res) {
     const prop = occupant.properties?.[0];
     if (!prop) continue;
 
-    const exists = await MonthlyCharge.findOne({
-      realmId,
-      occupantId: String(occupant._id),
-      period
-    });
-
+    const exists = await MonthlyCharge.findOne({ realmId, occupantId: String(occupant._id), period });
     if (exists) {
       skipped.push(String(occupant._id));
       continue;
     }
+
+    const lease = leaseMap[String(occupant.leaseId)] || {};
+    const dueDay = lease.dueDay || 5;
+    const dueType = lease.dueType || 'fixo';
+    const dueDate = calcDueDate(year, month, dueDay, dueType);
 
     const items = _buildItems(occupant);
     const charge = await MonthlyCharge.create({
